@@ -42,11 +42,14 @@ class ExactNameMatcherTest {
 
     @Test
     void nullOrBlankMeansNoInformation() {
-        assertThat(matcher.similarity(null, "Ravi Kumar")).isZero();
-        assertThat(matcher.similarity("Ravi Kumar", null)).isZero();
-        assertThat(matcher.similarity(null, null)).isZero();
-        assertThat(matcher.similarity("  ", "  ")).isZero();
-        assertThat(matcher.similarity("Ltd", "LLP")).isZero(); // nothing left after suffix removal
+        assertThat(matcher.similarity(null, "Ravi Kumar")).isEqualTo(NameMatcher.NO_INFO);
+        assertThat(matcher.similarity("Ravi Kumar", null)).isEqualTo(NameMatcher.NO_INFO);
+        assertThat(matcher.similarity(null, null)).isEqualTo(NameMatcher.NO_INFO);
+        assertThat(matcher.similarity("  ", "  ")).isEqualTo(NameMatcher.NO_INFO);
+        assertThat(matcher.similarity("M/S", "Ravi Kumar")).isEqualTo(0.0); // a word, just not a matching one
+        assertThat(matcher.similarity(".,-", "Ravi Kumar")).isEqualTo(NameMatcher.NO_INFO); // nothing left
+        // The exact matcher ignores UPI handles.
+        assertThat(matcher.similarityWithHandle(null, "ravi.kumar@okaxis", "Ravi Kumar")).isEqualTo(NameMatcher.NO_INFO);
     }
 
     @Test

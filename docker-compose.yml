@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: plutus-postgres
+    environment:
+      POSTGRES_DB: plutus
+      POSTGRES_USER: plutus
+      POSTGRES_PASSWORD: plutus
+    ports:
+      - "5432:5432"
+    volumes:
+      - plutus-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plutus -d plutus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  plutus-pgdata:

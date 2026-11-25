@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import com.plutus.common.InvoiceReference;
 import com.plutus.domain.PaymentSource;
 
 /**
@@ -23,11 +24,15 @@ import com.plutus.domain.PaymentSource;
  */
 public final class NarrationParser {
 
-    /** INV, an optional separator (-, space, /, #), then digits. Group 1 = the digits. */
-    public static final Pattern DEFAULT_INVOICE_PATTERN =
-            Pattern.compile("(?<![A-Za-z0-9])INV\\s*[-/#]?\\s*(\\d+)(?![A-Za-z0-9@])", Pattern.CASE_INSENSITIVE);
+    /**
+     * {@link InvoiceReference#CORE_REGEX} (INV, optional -, space, / or #, digits), not embedded in a
+     * longer word or a VPA.
+     */
+    public static final Pattern DEFAULT_INVOICE_PATTERN = Pattern.compile(
+            "(?<![A-Za-z0-9])" + InvoiceReference.CORE_REGEX + "(?![A-Za-z0-9@])", Pattern.CASE_INSENSITIVE);
 
-    private static final Function<MatchResult, String> DEFAULT_INVOICE_NORMALISER = m -> "INV-" + m.group(1);
+    private static final Function<MatchResult, String> DEFAULT_INVOICE_NORMALISER =
+            m -> InvoiceReference.normalize(m.group());
 
     private static final Pattern SOURCE_PREFIX =
             Pattern.compile("^\\s*(UPI|NEFT|RTGS|IMPS)(?=$|[\\s/-])", Pattern.CASE_INSENSITIVE);
@@ -66,7 +71,7 @@ public final class NarrationParser {
     private final Pattern invoicePattern;
     private final Function<MatchResult, String> invoiceNormaliser;
 
-    /** Uses {@link #DEFAULT_INVOICE_PATTERN}, normalising matches to {@code INV-<digits>}. */
+    /** Uses {@link #DEFAULT_INVOICE_PATTERN}, normalising matches via {@link InvoiceReference#normalize}. */
     public NarrationParser() {
         this(DEFAULT_INVOICE_PATTERN, DEFAULT_INVOICE_NORMALISER);
     }

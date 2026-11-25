@@ -12,6 +12,17 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  mvc:
+    problemdetails:
+      enabled: true
+
+plutus:
+  # Merchant business zone: statement dates are interpreted as start-of-day here.
+  timezone: Asia/Kolkata
 
 management:
   endpoints:

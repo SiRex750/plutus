@@ -7,11 +7,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -25,13 +23,7 @@ class DataLayerIntegrationTest extends AbstractIntegrationTest {
     @Autowired InvoiceRepository invoices;
     @Autowired PaymentRepository payments;
     @Autowired AllocationRepository allocations;
-    @Autowired JdbcTemplate jdbc;
     @Autowired TransactionTemplate tx;
-
-    @AfterEach
-    void cleanDatabase() {
-        jdbc.execute("TRUNCATE allocations, payments, invoices RESTART IDENTITY CASCADE");
-    }
 
     @Test
     void entitiesRoundTripAndDerivedHelpersWork() {
